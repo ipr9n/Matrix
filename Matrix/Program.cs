@@ -7,8 +7,8 @@ namespace Matrix
     class Program
     {
         public static Point sizeMatrix = new Point();
-        public static int[,] matrix;
-        private static int longestInt;
+        public static float[,] matrix;
+        private static int longestFloat;
 
         static void Main(string[] args)
         {
@@ -36,24 +36,33 @@ namespace Matrix
                 Restart();
             }
 
-            sizeMatrix = new Point(Int32.Parse(input.Split()[0]),
-                Int32.Parse(input.Split()[1]));
+            try
+            {
+                sizeMatrix = new Point(Int32.Parse(input.Split()[0]),
+                    Int32.Parse(input.Split()[1]));
+            }
+            catch (System.OverflowException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
+                Restart();
+            } 
 
-            matrix = new int[sizeMatrix.X, sizeMatrix.Y];
+            matrix = new float[sizeMatrix.X, sizeMatrix.Y];
 
             for (int i = 0; i < sizeMatrix.X; i++)
                 for (int j = 0; j < sizeMatrix.Y; j++)
                 {
-                    int n;
+                    float n;
                     Console.Write($"\narray[{i}][{j}] = ");
                     var tempNumber = Console.ReadLine();
 
-                    if (int.TryParse(tempNumber, out n))
+                    if (float.TryParse(tempNumber, out n))
                     {
-                        if (tempNumber.Length > longestInt)
-                            longestInt = tempNumber.Length;
+                        if (tempNumber.Length > longestFloat)
+                            longestFloat = tempNumber.Length;
 
-                        matrix[i, j] = int.Parse(tempNumber);
+                        matrix[i, j] = float.Parse(tempNumber);
                     }
                     else
                     {
@@ -73,6 +82,7 @@ namespace Matrix
                                   "Write 4 to find count numbers <0\n" +
                                   "Write 5 to inverse line\n" +
                                   "Write 6 to show matrix");
+
                 switch (Console.ReadLine())
                 {
                     case "1":
@@ -145,24 +155,34 @@ namespace Matrix
 
         public static void MatrixShow()
         {
-            int cursorX = 0;
-            longestInt += 5;
-            for (int i = 0; i < sizeMatrix.X; i++)
+            try
             {
-                for (int j = 0; j < sizeMatrix.Y; j++)
+                int cursorX = 0;
+                if (longestFloat > 13) longestFloat = 13;
+                for (int i = 0; i < sizeMatrix.X; i++)
                 {
-                    cursorX = (j * longestInt) + 20;
-                    Console.SetCursorPosition(cursorX, Console.CursorTop);
-                    Console.Write($" | {matrix[i, j]}");
+                    for (int j = 0; j < sizeMatrix.Y; j++)
+                    {
+                        cursorX = (j * longestFloat) + 5;
+                        Console.SetCursorPosition(cursorX, Console.CursorTop);
+                        Console.Write($" | {matrix[i, j]}");
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
             }
+            catch (System.ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine("\nMatrix is more then console size, please enter smaller numbers ");
+                Console.ReadKey();
+                Restart();
+            }
+          
         }
 
         public static void InverseMatrix(int line)
         {
             line -= 1;
-            int[] inverseMatrix = new int[sizeMatrix.Y];
+            float[] inverseMatrix = new float[sizeMatrix.Y];
             for (int i = 0; i < sizeMatrix.Y; i++)
                 inverseMatrix[i] = matrix[line, sizeMatrix.Y - 1 - i];
             for (int i = 0; i < sizeMatrix.Y; i++)
@@ -171,7 +191,7 @@ namespace Matrix
 
         public static void Sort(int line, int type)
         {
-            int temp;
+           float temp;
             line -= 1;
             switch (type)
             {
